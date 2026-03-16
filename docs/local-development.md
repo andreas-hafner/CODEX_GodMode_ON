@@ -28,6 +28,12 @@ Im Repo-Root:
 ./scripts/check-local-env.sh
 ```
 
+Wenn du diesen Mac auf den dokumentierten Global-Stand bringen willst:
+
+```bash
+./scripts/apply-global-codex-setup.sh
+```
+
 Optional ausfuehrlicher:
 
 ```bash
@@ -35,6 +41,30 @@ Optional ausfuehrlicher:
 ```
 
 `--full` fuehrt zusaetzlich `flutter doctor -v` aus, was laenger dauern kann.
+
+## Globale Profile fuer den Alltag
+
+Die globale Beispielkonfiguration installiert vier Profile:
+
+- `swiftui` fuer macOS- und iOS-Arbeit
+- `web` fuer React, Next.js und Node.js
+- `flutter` fuer Flutter und Dart
+- `review` fuer Code- und Architektur-Reviews
+
+CLI-Beispiele:
+
+```bash
+codex --profile swiftui
+codex --profile web
+codex --profile flutter
+codex --profile review
+```
+
+Zum Pruefen des globalen Zustands:
+
+```bash
+./scripts/apply-global-codex-setup.sh --check
+```
 
 ## Repo-Struktur fuer den Alltag
 
@@ -48,11 +78,12 @@ Optional ausfuehrlicher:
 1. `git pull --ff-only`
 2. neue Arbeitsbranch mit `codex/`-Prefix anlegen
 3. `./scripts/check-local-env.sh`
-4. Codex aus dem Repo-Root starten
-5. fuer groessere Aufgaben den GodMode-Workflow und passende Stack-Skills nutzen
-6. nur die relevanten Validierungen laufen lassen
-7. kleine Commits vorbereiten
-8. erst nach expliziter Freigabe pushen
+4. optional `./scripts/apply-global-codex-setup.sh`
+5. Codex aus dem Repo-Root starten
+6. fuer groessere Aufgaben den GodMode-Workflow und passende Stack-Skills nutzen
+7. nur die relevanten Validierungen laufen lassen
+8. kleine Commits vorbereiten
+9. erst nach expliziter Freigabe pushen
 
 ## Welche Skills hier zuerst sinnvoll sind
 

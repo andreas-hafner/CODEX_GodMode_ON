@@ -27,7 +27,7 @@ Wir dokumentieren hier:
 - wie die Zielarchitektur in Codex aufgebaut sein soll
 - in welchen Phasen die eigentliche Umsetzung spaeter erfolgen soll
 
-Aktueller Status: Dieses Repo enthaelt jetzt die Blueprint plus das erste lokale Runtime-Scaffolding fuer Agents, Skills, Verifikation und Arbeitsartefakte. Es ist bewusst noch keine Vollimplementierung.
+Aktueller Status: Dieses Repo enthaelt jetzt die Blueprint, das erste lokale Runtime-Scaffolding fuer Agents, Skills, Verifikation und Arbeitsartefakte sowie ein reproduzierbares Global-Setup fuer `~/.codex` inklusive Profilen fuer `swiftui`, `web`, `flutter` und `review`. Es ist bewusst noch keine Vollimplementierung.
 
 ## Lese-Reihenfolge
 
@@ -74,11 +74,13 @@ Das ist wichtig, weil das Ziel nicht einfach ein "Claude-Prompt fuer Codex" ist,
 | `docs/roadmap.md` | die geplanten Umsetzungsphasen |
 | `docs/local-development.md` | lokaler Installations- und Entwicklungsablauf |
 | `docs/global-codex-setup.md` | flankierende Setup- und Strukturhinweise fuer Codex |
+| `templates/global-codex/` | reproduzierbare globale Codex-Defaults fuer diesen Mac |
 | `AGENTS.md` | Repo-Regeln fuer diese Blueprint-Repo |
 | `.codex/config.toml` | konservative Repo-Defaults fuer die Arbeit an dieser Repo |
 | `.codex/agents/` | erste Custom-Agent-Rollen fuer den GodMode-Workflow |
 | `.agents/skills/` | stack-spezifische und workflow-spezifische Skills |
 | `scripts/check-local-env.sh` | verifiziert Toolchains und Repo-Struktur lokal |
+| `scripts/apply-global-codex-setup.sh` | installiert das dokumentierte Global-Setup in `~/.codex` |
 | `reports/` | versionierte Report-Kontrakte und lokaler Report-Ausgabepfad |
 | `state/` | lokaler Workflow-State ausserhalb des Chat-Verlaufs |
 | `hooks/` | spaetere Guardrails und Workflow-Helfer, nicht die primaere Orchestrierung |

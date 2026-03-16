@@ -30,6 +30,36 @@ Dieses Setup loest drei typische Probleme gleichzeitig:
 2. weniger Wiederholung in Startprompts
 3. klare Trennung zwischen persoenlichen Defaults und Team-Regeln
 
+## Schnellstart fuer diesen Mac
+
+Diese Repo enthaelt inzwischen ein reproduzierbares Global-Setup unter:
+
+- `templates/global-codex/AGENTS.md`
+- `templates/global-codex/config.toml`
+- `scripts/apply-global-codex-setup.sh`
+
+Wenn du den dokumentierten Stand direkt auf diesem Mac anwenden willst:
+
+```bash
+./scripts/apply-global-codex-setup.sh
+```
+
+Das Script macht bewusst nur drei Dinge:
+
+- legt `~/.codex/AGENTS.md` und `~/.codex/config.toml` aus den Repo-Templates ab
+- erstellt `~/.agents/skills/` und `~/.codex/playwright-output/isolated`
+- traegt den aktuellen Repo-Pfad als trusted project ein
+
+Dabei ersetzt es im Config-Template auch den Platzhalter `__CODEX_HOME__`, damit die Playwright-Ausgabe nicht an einen user-spezifischen Pfad im Git-Repo gebunden ist.
+
+Vorhandene globale Dateien werden jeweils mit Zeitstempel gesichert.
+
+Zum Pruefen:
+
+```bash
+./scripts/apply-global-codex-setup.sh --check
+```
+
 ## 1. Globalen Codex-Ordner anlegen
 
 Codex nutzt `~/.codex` als Home fuer persoenliche Konfiguration und globale Instruktionen.
@@ -107,6 +137,26 @@ Warum diese Werte ein sinnvoller Startpunkt sind:
 - `sandbox_mode = "workspace-write"` erlaubt Aenderungen im Projekt, aber nicht uneingeschraenkt alles.
 - `writable_roots = []` und `network_access = false` halten den Default bewusst eng.
 - `web_search = "cached"` nutzt laut Doku standardmaessig einen OpenAI-maintained Index statt Live-Fetching.
+
+## 4a. Profile fuer haeufige Modi
+
+Die Repo-Templates legen vier globale Codex-Profile an:
+
+- `swiftui` fuer Apple-Plattformarbeit mit Schwerpunkt auf SwiftUI-State, `xcodebuild` und konservativer Recherche
+- `web` fuer React, Next.js und Node.js mit `web_search = "live"`, weil sich Web-Framework-Guidance schneller aendert
+- `flutter` fuer Flutter- und Dart-Arbeit mit Analyzer- und Test-Fokus
+- `review` fuer Review- oder Audit-Sessions mit knapperer Ausgabe und Findings-First-Haltung
+
+CLI-Beispiele:
+
+```bash
+codex --profile swiftui
+codex --profile web
+codex --profile flutter
+codex --profile review
+```
+
+Das ist bewusst nur ein Konfigurations-Layer. Die eigentliche Stack-Guidance bleibt in `AGENTS.md`, Repo-`AGENTS.md` und den projektspezifischen Skills.
 
 ## 5. Repo-Regeln ins Projekt verschieben
 
@@ -224,6 +274,13 @@ oder:
 
 ```bash
 codex --ask-for-approval never "Summarize the current instructions."
+```
+
+Fuer diese Repo zusaetzlich:
+
+```bash
+./scripts/apply-global-codex-setup.sh --check
+./scripts/check-local-env.sh
 ```
 
 ## Was ich nicht mehr empfehlen wuerde
