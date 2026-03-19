@@ -1,0 +1,32 @@
+# Apple Start Prompt
+
+Use this for SwiftUI work on macOS and iOS.
+
+These prompts assume the global install has already been applied.
+
+## Prompt
+
+```text
+$godmode-workflow
+$apple-platforms
+
+GODMODE APPLE
+
+Goal: <goal>
+
+Inspect the current workspace first.
+Loop: research -> plan -> build -> validate.
+```
+
+## Best for
+
+- SwiftUI view work
+- shared macOS and iOS UI flows
+- state ownership and data-flow refactors
+- Apple-platform validation work with `xcodebuild`
+
+## Optional extras
+
+- target app, scheme, or directory
+- expected platform such as `macOS`, `iOS`, or both
+- required validation command such as `xcodebuild build` or `xcodebuild test`

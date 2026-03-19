@@ -25,6 +25,8 @@ Install the workflow once:
 
 After that, start Codex in any workspace and copy one of these prompts exactly as-is.
 
+These prompts intentionally use skill mentions such as `$godmode-workflow`, `$web-platforms`, `$apple-platforms`, and `$flutter-dart`. That is the documented Codex skill invocation path.
+
 This repository is the installer, reference implementation, and contribution surface for the global setup.
 
 Files:
@@ -32,6 +34,9 @@ Files:
 - [docs/prompts/dev-start-prompt.md](./docs/prompts/dev-start-prompt.md)
 - [docs/prompts/debug-start-prompt.md](./docs/prompts/debug-start-prompt.md)
 - [docs/prompts/review-start-prompt.md](./docs/prompts/review-start-prompt.md)
+- [docs/prompts/web-start-prompt.md](./docs/prompts/web-start-prompt.md)
+- [docs/prompts/apple-start-prompt.md](./docs/prompts/apple-start-prompt.md)
+- [docs/prompts/flutter-start-prompt.md](./docs/prompts/flutter-start-prompt.md)
 
 Dev:
 
@@ -72,6 +77,89 @@ Inspect the current workspace first.
 Loop: inspect -> analyze -> verify -> report.
 Findings first. No code changes unless asked.
 ```
+
+Stack-specific dev starters:
+
+Web:
+
+```text
+$godmode-workflow
+$web-platforms
+
+GODMODE WEB
+
+Goal: <goal>
+
+Inspect the current workspace first.
+Loop: research -> plan -> build -> validate.
+```
+
+Apple:
+
+```text
+$godmode-workflow
+$apple-platforms
+
+GODMODE APPLE
+
+Goal: <goal>
+
+Inspect the current workspace first.
+Loop: research -> plan -> build -> validate.
+```
+
+Flutter:
+
+```text
+$godmode-workflow
+$flutter-dart
+
+GODMODE FLUTTER
+
+Goal: <goal>
+
+Inspect the current workspace first.
+Loop: research -> plan -> build -> validate.
+```
+
+## How To Use It
+
+1. Install the global runtime once with `./scripts/apply-global-codex-setup.sh`.
+2. Open any workspace in the Codex app or CLI.
+3. Paste one of the prompts from this README into a new thread.
+4. Replace `Goal` with the real task.
+5. Let Codex inspect the workspace first, then follow the requested loop.
+
+## Skills, Slash Commands, and Agents
+
+### Skills
+
+- Skills are invoked with `$`, not with `@`.
+- Example: `$godmode-workflow`, `$web-platforms`, `$apple-platforms`, `$flutter-dart`
+- In Codex, you can type `$` in the composer to mention a skill directly.
+- In the Codex app, enabled skills can also appear in the slash-command list.
+
+### Slash commands
+
+- In the Codex app, type `/` in the composer to open the slash-command list.
+- Useful built-in commands include `/status`, `/review`, and `/plan-mode`.
+- In interactive Codex sessions, slash commands are for session control; the workflow prompts in this repo are for task startup.
+
+### Agents and subagents
+
+- The GodMode runtime installs custom agents such as `researcher`, `architect`, `builder`, `validator`, `tester`, `scribe`, and `api_guardian`.
+- The documented prompt surface in this repo uses skills to start the workflow, not `@agent` mentions.
+- To use the installed agents, ask Codex directly to use or split work across those roles.
+- In the CLI, `/agent` lets you switch between active agent threads after subagents have been spawned.
+
+## Which Prompt To Use
+
+- Use `GODMODE DEV` for general implementation.
+- Use `GODMODE DEBUG` for reproduce -> isolate -> fix work.
+- Use `GODMODE REVIEW` for analysis-only or findings-first review.
+- Use `GODMODE WEB` for React, Next.js, and Node.js work.
+- Use `GODMODE APPLE` for SwiftUI, macOS, and iOS work.
+- Use `GODMODE FLUTTER` for Flutter and Dart work.
 
 ## What This Repo Is
 
@@ -127,6 +215,8 @@ It is not just a prompt pack. It is the bootstrap repo for the globally installe
 
 - Source repo: [cubetribe/ClaudeCode_GodMode-On](https://github.com/cubetribe/ClaudeCode_GodMode-On)
 - Codex docs: [Subagents](https://developers.openai.com/codex/subagents/)
+- Codex docs: [Slash commands in Codex CLI](https://developers.openai.com/codex/cli/slash-commands)
+- Codex docs: [Codex app commands](https://developers.openai.com/codex/app/commands)
 - Codex docs: [Custom instructions with AGENTS.md](https://developers.openai.com/codex/guides/agents-md/)
 - Codex docs: [Configuration reference](https://developers.openai.com/codex/config-reference/)
 - Codex docs: [Agent Skills](https://developers.openai.com/codex/skills/)

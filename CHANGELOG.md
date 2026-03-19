@@ -6,6 +6,18 @@ The format is based on Keep a Changelog.
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-03-19
+
+### Added
+
+- stack-specific starter prompts for `web`, `apple`, and `flutter`
+
+### Changed
+
+- surfaced the stack-specific starters directly in the README for copy-paste use
+- expanded the README with explicit usage guidance for `$` skill mentions, `/` slash commands, and agent usage
+- expanded repo validation to cover the new prompt files
+
 ## [0.2.0] - 2026-03-19
 
 ### Added
