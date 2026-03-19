@@ -1,7 +1,7 @@
 <div align="center">
   <h1>CODEX_GodMode_ON</h1>
-  <p><strong>Copy-paste starter prompts first. Codex-native architecture blueprint second.</strong></p>
-  <p>This repository documents and packages a main-first Codex workflow inspired by <a href="https://github.com/cubetribe/ClaudeCode_GodMode-On">ClaudeCode_GodMode-On</a>.</p>
+  <p><strong>Install once globally. Then start any Codex session with the prompts below.</strong></p>
+  <p>This repository packages a globally installable Codex workflow inspired by <a href="https://github.com/cubetribe/ClaudeCode_GodMode-On">ClaudeCode_GodMode-On</a>.</p>
   <p>
     <a href="./docs/blueprint.md">Blueprint</a>
     &middot;
@@ -15,15 +15,17 @@
 
 ## Start Here
 
-This system is already in active use. The repository therefore needs to tell the truth immediately, at the top, and in English.
+Users should not need to pull this repository into every new session.
 
-If you only need to start a new Codex thread, copy one of these prompts exactly as-is and replace `Goal`.
+Install the workflow once:
 
-This repository is intentionally `main`-first:
+```bash
+./scripts/apply-global-codex-setup.sh
+```
 
-- `main` is the delivery branch
-- no standing side branches unless explicitly required
-- prompts live in the README because they are part of the product surface
+After that, start Codex in any workspace and copy one of these prompts exactly as-is.
+
+This repository is the installer, reference implementation, and contribution surface for the global setup.
 
 Files:
 
@@ -34,45 +36,46 @@ Files:
 Dev:
 
 ```text
+$godmode-workflow
+
 GODMODE DEV
 
 Goal: <goal>
 
-Use repo workflow, available tools, agents, and skills.
+Inspect the current workspace first.
 Loop: research -> plan -> build -> validate.
-Use subagents when useful.
-Keep changes minimal. Verify before push.
 ```
 
 Debug:
 
 ```text
+$godmode-workflow
+
 GODMODE DEBUG
 
 Goal: <bug / symptom / expected result>
 
-Use repo workflow, available tools, agents, and skills.
+Inspect the current workspace first.
 Loop: reproduce -> isolate -> fix -> re-test.
-Use subagents when useful.
-Stay on the failing path until green.
 ```
 
 Review:
 
 ```text
+$godmode-workflow
+
 GODMODE REVIEW
 
 Goal: <system / change / problem to assess>
 
-Use repo workflow, available tools, agents, and skills.
+Inspect the current workspace first.
 Loop: inspect -> analyze -> verify -> report.
-Use subagents when useful.
 Findings first. No code changes unless asked.
 ```
 
 ## What This Repo Is
 
-This repository is the documented reference for a Codex-native version of the GodMode workflow:
+This repository is the documented reference and installer source for a Codex-native version of the GodMode workflow:
 
 - explicit orchestration instead of hidden automation
 - a clear main thread acting as orchestrator
@@ -80,7 +83,7 @@ This repository is the documented reference for a Codex-native version of the Go
 - persistent reports and state artifacts
 - hard quality gates before completion
 
-It is not just a prompt pack. It is the blueprint, starter kit, and local reference structure for the system.
+It is not just a prompt pack. It is the bootstrap repo for the globally installed system.
 
 ## What You Get
 
@@ -89,14 +92,14 @@ It is not just a prompt pack. It is the blueprint, starter kit, and local refere
 | `README.md` | the public entry point and copy-paste prompts |
 | `docs/blueprint.md` | the architecture and workflow design |
 | `docs/roadmap.md` | phased delivery plan |
-| `docs/local-development.md` | local operating guide for this repo |
-| `docs/global-codex-setup.md` | reproducible user-level Codex setup |
+| `docs/local-development.md` | maintainer operating guide for this repo |
+| `docs/global-codex-setup.md` | reproducible install guide for the global runtime |
 | `docs/prompts/` | standalone prompt documents |
-| `.codex/agents/` | project-specific agent role definitions |
-| `.agents/skills/` | reusable workflow and stack skills |
-| `templates/global-codex/` | global Codex config templates |
+| `.codex/agents/` | canonical GodMode agent role definitions that the installer publishes to `~/.codex/agents/` |
+| `.agents/skills/` | canonical GodMode skills that the installer publishes to `~/.agents/skills/` |
+| `templates/global-codex/` | global `AGENTS.md` and `config.toml` templates |
 | `scripts/check-local-env.sh` | local repo validation |
-| `scripts/apply-global-codex-setup.sh` | install the documented global setup |
+| `scripts/apply-global-codex-setup.sh` | install the documented global setup, agents, and skills |
 | `reports/` | persistent report conventions |
 | `state/` | persistent workflow state conventions |
 
@@ -109,6 +112,7 @@ It is not just a prompt pack. It is the blueprint, starter kit, and local refere
 - Reports and state live in the repo, not only in chat history.
 - Push and deploy remain explicit human decisions.
 - This repository now operates on `main` by default.
+- Daily use should work from any workspace after a one-time global install.
 
 ## Read Next
 

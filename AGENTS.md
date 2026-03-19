@@ -2,14 +2,14 @@
 
 ## Project rules
 
-- This repository documents the blueprint for a Codex-native port of `ClaudeCode_GodMode-On`.
+- This repository documents and packages the globally installable GodMode runtime for Codex.
 - This repository is `main`-first. Do not create or switch to feature branches unless the user explicitly asks for one.
 - Prefer current official OpenAI Codex documentation when changing setup guidance or product claims.
 - Keep repo guidance explicit, auditable, and clearly separated from future implementation work.
-- Use `AGENTS.md` for durable repo rules, `.codex/config.toml` for repo defaults, `.codex/agents/` for future custom agent definitions, and `.agents/skills/` for reusable procedures.
+- Use `AGENTS.md` for durable repo rules, `.codex/config.toml` for repo defaults, `.codex/agents/` for the canonical GodMode custom agents, and `.agents/skills/` for the canonical GodMode reusable procedures.
 - Do not add speculative guidance about Codex features without a source or a clear note that it is an inference.
 - If the original Claude repository is referenced, distinguish between extracted facts from the source repo and new Codex design decisions.
-- Keep `.codex/agents/`, `.agents/skills/`, and docs aligned when role names or workflow gates change.
+- Keep `.codex/agents/`, `.agents/skills/`, installer behavior, and docs aligned when role names or workflow gates change.
 
 ## Documentation rules
 

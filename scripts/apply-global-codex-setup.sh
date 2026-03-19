@@ -18,7 +18,7 @@ Options:
   --codex-home PATH      Override the target Codex home directory
   --user-skills-home PATH
                          Override the target user skills directory
-  --repo PATH            Override the repository root used for templates and trust
+  --repo PATH            Override the repository root used for templates, agents, skills, and trust
   --no-trust-project     Do not add the repository path to [projects."<path>"]
   -h, --help             Show this help text
 EOF
@@ -61,8 +61,11 @@ done
 template_root="${repo_root}/templates/global-codex"
 source_agents="${template_root}/AGENTS.md"
 source_config="${template_root}/config.toml"
+source_repo_agents="${repo_root}/.codex/agents"
+source_repo_skills="${repo_root}/.agents/skills"
 target_agents="${codex_home}/AGENTS.md"
 target_config="${codex_home}/config.toml"
+target_agents_dir="${codex_home}/agents"
 playwright_output="${codex_home}/playwright-output/isolated"
 timestamp="$(date +%Y-%m-%dT%H-%M-%S)"
 
@@ -74,11 +77,19 @@ require_file() {
   fi
 }
 
-backup_file() {
+require_dir() {
   local path="$1"
-  if [[ -f "$path" ]]; then
+  if [[ ! -d "$path" ]]; then
+    printf 'Required directory missing: %s\n' "$path" >&2
+    exit 1
+  fi
+}
+
+backup_path() {
+  local path="$1"
+  if [[ -e "$path" ]]; then
     local backup_path="${path}.backup-${timestamp}"
-    cp "$path" "$backup_path"
+    cp -R "$path" "$backup_path"
     printf 'Backed up %s -> %s\n' "$path" "$backup_path"
   fi
 }
@@ -125,13 +136,43 @@ ensure_project_trust() {
   printf 'Added trusted project: %s\n' "$project_path"
 }
 
+install_agent_files() {
+  local source_path
+  for source_path in "${source_repo_agents}"/*.toml; do
+    [[ -f "$source_path" ]] || continue
+    local target_path="${target_agents_dir}/$(basename "$source_path")"
+    backup_path "$target_path"
+    install -m 0644 "$source_path" "$target_path"
+  done
+}
+
+install_skill_dirs() {
+  local source_dir
+  for source_dir in "${source_repo_skills}"/*; do
+    [[ -d "$source_dir" ]] || continue
+    local skill_name
+    skill_name="$(basename "$source_dir")"
+    local target_dir="${user_skills_home}/${skill_name}"
+    if [[ -d "$target_dir" ]]; then
+      backup_path "$target_dir"
+    fi
+    mkdir -p "$target_dir"
+    cp -R "${source_dir}/." "$target_dir/"
+  done
+}
+
 run_check() {
   local status=0
 
   check_path "$target_agents" "Global AGENTS" || status=1
   check_path "$target_config" "Global config" || status=1
+  check_path "$target_agents_dir" "Global agents dir" || status=1
   check_path "$user_skills_home" "User skills home" || status=1
   check_path "$playwright_output" "Playwright output" || status=1
+  check_path "${target_agents_dir}/builder.toml" "Global agent builder" || status=1
+  check_path "${target_agents_dir}/researcher.toml" "Global agent researcher" || status=1
+  check_path "${user_skills_home}/godmode-workflow/SKILL.md" "Global skill godmode-workflow" || status=1
+  check_path "${user_skills_home}/web-platforms/SKILL.md" "Global skill web-platforms" || status=1
 
   if [[ -f "$target_config" ]]; then
     check_contains "$target_config" "[profiles.swiftui]" "config profile swiftui" || status=1
@@ -145,6 +186,15 @@ run_check() {
 
   if [[ -f "$target_agents" ]]; then
     check_contains "$target_agents" "## Profile intents" "global AGENTS profile guidance" || status=1
+    check_contains "$target_agents" "## Global workflow" "global AGENTS workflow guidance" || status=1
+  fi
+
+  if [[ -f "${target_agents_dir}/builder.toml" ]]; then
+    check_contains "${target_agents_dir}/builder.toml" 'name = "builder"' "installed builder agent name" || status=1
+  fi
+
+  if [[ -f "${user_skills_home}/godmode-workflow/SKILL.md" ]]; then
+    check_contains "${user_skills_home}/godmode-workflow/SKILL.md" "GodMode Workflow" "installed godmode skill" || status=1
   fi
 
   if [[ "$status" -ne 0 ]]; then
@@ -157,26 +207,31 @@ run_check() {
 
 require_file "$source_agents"
 require_file "$source_config"
+require_dir "$source_repo_agents"
+require_dir "$source_repo_skills"
 
 if [[ "$check_only" == true ]]; then
   run_check
   exit 0
 fi
 
-mkdir -p "$codex_home" "$user_skills_home" "$playwright_output"
+mkdir -p "$codex_home" "$user_skills_home" "$playwright_output" "$target_agents_dir"
 
-backup_file "$target_agents"
-backup_file "$target_config"
+backup_path "$target_agents"
+backup_path "$target_config"
 
 install -m 0644 "$source_agents" "$target_agents"
 render_config_template
 chmod 0644 "$target_config"
+install_agent_files
+install_skill_dirs
 
 if [[ "$trust_project" == true ]]; then
   ensure_project_trust "$target_config" "$repo_root"
 fi
 
 printf '\nInstalled global Codex setup to %s\n' "$codex_home"
+printf 'Installed global agents to %s\n' "$target_agents_dir"
 printf 'Installed user skill root at %s\n' "$user_skills_home"
 printf 'Prepared Playwright output directory at %s\n' "$playwright_output"
 

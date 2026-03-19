@@ -2,17 +2,19 @@
 
 Use this for implementation work.
 
+These prompts assume the global install has already been applied.
+
 ## Prompt
 
 ```text
+$godmode-workflow
+
 GODMODE DEV
 
 Goal: <goal>
 
-Use repo workflow, available tools, agents, and skills.
+Inspect the current workspace first.
 Loop: research -> plan -> build -> validate.
-Use subagents when useful.
-Keep changes minimal. Verify before push.
 ```
 
 ## Best for
@@ -26,3 +28,5 @@ Keep changes minimal. Verify before push.
 - target files or directories
 - required validation command such as `pnpm test`, `xcodebuild test`, or `flutter test`
 - explicit non-goals to keep scope tight
+- prepend `$web-platforms`, `$apple-platforms`, or `$flutter-dart` if stack-specific guidance should trigger immediately
+- whether the current workspace has local rules that should override the global defaults

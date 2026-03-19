@@ -1,12 +1,12 @@
 # Configure Codex Globally
 
-This note explains the user-level Codex setup that matches this repository.
+This note explains the user-level Codex setup that turns this repository into a one-time installer instead of a per-session dependency.
 
 The goal is simple:
 
-- stable defaults across projects
-- less prompt repetition
-- a clean split between personal defaults and repo-specific rules
+- install once
+- use the GodMode workflow in any workspace
+- keep a clean split between global runtime and local overrides
 
 ## Recommended layer model
 
@@ -14,6 +14,8 @@ The current Codex documentation supports this structure:
 
 - personal guidance in `~/.codex/AGENTS.md`
 - personal technical defaults in `~/.codex/config.toml`
+- personal custom agents in `~/.codex/agents/*.toml`
+- personal reusable skills in `~/.agents/skills/`
 - repo rules in `AGENTS.md`
 - repo defaults in `.codex/config.toml`
 - project-specific custom agents in `.codex/agents/*.toml`
@@ -30,6 +32,8 @@ This repository ships a reproducible global setup under:
 
 - `templates/global-codex/AGENTS.md`
 - `templates/global-codex/config.toml`
+- `.codex/agents/`
+- `.agents/skills/`
 - `scripts/apply-global-codex-setup.sh`
 
 Apply it with:
@@ -38,10 +42,12 @@ Apply it with:
 ./scripts/apply-global-codex-setup.sh
 ```
 
-That script does three things:
+That script does five things:
 
 - installs `~/.codex/AGENTS.md` and `~/.codex/config.toml` from the repo templates
-- ensures `~/.agents/skills/` and `~/.codex/playwright-output/isolated` exist
+- installs the GodMode agents to `~/.codex/agents/`
+- installs the GodMode skills to `~/.agents/skills/`
+- ensures `~/.codex/playwright-output/isolated` exists
 - adds the current repo path as a trusted project
 
 It also replaces the `__CODEX_HOME__` placeholder inside the config template so the Playwright output path stays portable.
@@ -122,11 +128,36 @@ codex --profile flutter
 codex --profile review
 ```
 
-These profiles are intentionally thin. The real workflow guidance still lives in:
+These profiles are intentionally thin. The workflow itself comes from the globally installed `AGENTS.md`, custom agents, and skills.
 
-- `AGENTS.md`
-- repo `AGENTS.md`
-- project-specific skills
+## Installed runtime layout
+
+After running the installer, the user-level runtime looks like this:
+
+```text
+~/.codex/
+  AGENTS.md
+  config.toml
+  agents/
+    researcher.toml
+    architect.toml
+    api_guardian.toml
+    builder.toml
+    validator.toml
+    tester.toml
+    scribe.toml
+    github_manager.toml
+
+~/.agents/
+  skills/
+    godmode-workflow/
+    apple-platforms/
+    web-platforms/
+    flutter-dart/
+    release-manager/
+```
+
+That is the important UX boundary: users do not need this repository open in every new Codex session after installation.
 
 ## Repo layout
 
@@ -148,19 +179,28 @@ Why the split matters:
 - `.codex/config.toml` defines technical defaults
 - `.codex/agents/*.toml` defines role-specific custom agents
 - `.agents/skills/` stores reusable procedures
+- workspace-local copies remain optional overrides when a project needs them
 
 ## Why not a giant start prompt
 
-The more durable pattern is:
+The durable pattern is:
 
 - `~/.codex/AGENTS.md` for personal defaults
 - `~/.codex/config.toml` for personal technical defaults
+- `~/.codex/agents/*.toml` for personal custom agents
+- `~/.agents/skills/` for personal reusable workflow skills
 - repo `AGENTS.md` for team or project rules
 - repo `.codex/config.toml` for technical repo defaults
 - repo `.codex/agents/*.toml` for project roles
 - repo `.agents/skills/` for reusable procedures
 
 This repository keeps prompts short on purpose because the real behavior belongs in those layers.
+
+## Smoke-test the install
+
+After applying the installer, start Codex in any workspace and use one of the README prompts.
+
+The prompt should explicitly invoke `$godmode-workflow` and should not refer to this repository as a required runtime dependency.
 
 ## Notes about Local vs Worktree
 

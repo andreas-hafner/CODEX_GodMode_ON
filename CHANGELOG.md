@@ -6,6 +6,21 @@ The format is based on Keep a Changelog.
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-03-19
+
+### Added
+
+- true global installation of the GodMode agents into `~/.codex/agents/`
+- true global installation of the GodMode skills into `~/.agents/skills/`
+- end-to-end installer checks for the installed agent and skill runtime
+
+### Changed
+
+- rewrote the public prompts so they target the installed global workflow instead of a repo-local workflow
+- made the public starter prompts explicitly invoke `$godmode-workflow` for more reliable activation
+- repositioned the repository as the bootstrap and reference repo for a one-time global install
+- updated the global guidance to inspect the current workspace first and treat repo-local assets as optional overrides
+
 ## [0.1.3] - 2026-03-18
 
 ### Changed

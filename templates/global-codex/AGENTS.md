@@ -2,7 +2,8 @@
 
 ## Default working style
 
-- Work only inside the currently opened project unless I explicitly ask for a separate clone or worktree.
+- Work only inside the currently opened workspace unless I explicitly ask for a separate clone or worktree.
+- Inspect the current workspace first. Do not assume it is a Git repo, app, package, monorepo, or empty folder until verified.
 - Keep diffs small, safe, and buildable.
 - Do not touch unrelated files.
 - Prefer official framework docs when guidance is version-sensitive.
@@ -11,9 +12,16 @@
 ## Execution flow
 
 - For non-trivial work: Research -> Plan -> Build -> Validate -> Release Summary.
-- Before editing, report repo root, current branch, touched files, and expected impact when that is not already obvious.
+- Before editing, report workspace root, current branch if present, touched files, and expected impact when that is not already obvious.
 - Run only the checks that match the changed scope.
-- Prefer repo-local `AGENTS.md`, `.codex/agents/`, and `.agents/skills/` over repeating large prompts in chat.
+- Use the installed global workflow, custom agents, and skills by default.
+- If the current workspace provides its own `AGENTS.md`, `.codex/agents/`, or `.agents/skills/`, treat them as local overrides and adapt to them instead of ignoring them.
+
+## Global workflow
+
+- Prefer the GodMode loop for non-trivial work.
+- Available global agents: `researcher`, `architect`, `api_guardian`, `builder`, `validator`, `tester`, `scribe`, `github_manager`.
+- Available global skills: `godmode-workflow`, `apple-platforms`, `web-platforms`, `flutter-dart`, `release-manager`.
 
 ## Profile intents
 

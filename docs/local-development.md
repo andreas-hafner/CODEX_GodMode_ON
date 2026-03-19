@@ -1,6 +1,8 @@
 # Local Development
 
-This repository is meant to be developed locally on this Mac and mirrored back to GitHub without hidden setup steps.
+This page is for maintainers of the bootstrap repository, not for end users starting everyday Codex sessions.
+
+This repository is developed locally on this Mac and mirrored back to GitHub without hidden setup steps.
 
 ## Operating mode
 
@@ -71,8 +73,9 @@ To verify the global setup:
 
 ## Repo structure
 
-- `.codex/agents/` contains agent-role definitions
-- `.agents/skills/` contains reusable procedures and stack guidance
+- `.codex/agents/` contains the canonical GodMode agent-role definitions
+- `.agents/skills/` contains the canonical reusable workflow and stack skills
+- `templates/global-codex/` contains the global `AGENTS.md` and `config.toml` templates
 - `reports/generated/` is for local generated reports
 - `state/` is for local workflow state
 
@@ -81,12 +84,14 @@ To verify the global setup:
 1. `git pull --ff-only origin main`
 2. run `./scripts/check-local-env.sh`
 3. optionally run `./scripts/apply-global-codex-setup.sh`
-4. start Codex from the repo root
-5. use the starter prompt that matches the task
-6. make the smallest safe change
-7. run the relevant validations only
-8. commit on `main` when you really want to keep the change
-9. push `main` when explicitly approved
+4. re-run `./scripts/apply-global-codex-setup.sh` after changing global guidance, agents, or skills
+5. validate the installed setup, not just the repo files
+6. start Codex in a representative workspace
+7. use the starter prompt that matches the task
+8. make the smallest safe change
+9. run the relevant validations only
+10. commit on `main` when you really want to keep the change
+11. push `main` when explicitly approved
 
 ## Good first skills in this repo
 
@@ -102,4 +107,4 @@ To verify the global setup:
 - a fully automated runtime outside Codex
 - CI/CD or release automation
 
-Those can come later once the local reference structure is stable.
+Those can come later once the global install flow is stable.
