@@ -20,6 +20,7 @@ Use a different branch only if you explicitly decide to.
 Expected toolchain classes:
 
 - `git`
+- `python3`
 - `node`, `npm`, `pnpm`
 - `swift`, `xcodebuild`
 - `flutter`, `dart`
@@ -46,6 +47,8 @@ Optional full check:
 ```
 
 `--full` also runs `flutter doctor -v`, so it takes longer.
+
+The same script is also used in GitHub Actions. In CI, it switches to repo-validation mode instead of requiring the full local Mac toolchain.
 
 ## Global profiles
 
@@ -74,6 +77,7 @@ To verify the global setup:
 ## Repo structure
 
 - `.codex/agents/` contains the canonical GodMode agent-role definitions
+- `.codex/agents/` now also contains the first optional department-oriented agent definitions
 - `.agents/skills/` contains the canonical reusable workflow and stack skills
 - `templates/global-codex/` contains the global `AGENTS.md` and `config.toml` templates
 - `reports/generated/` is for local generated reports
@@ -87,24 +91,51 @@ To verify the global setup:
 4. re-run `./scripts/apply-global-codex-setup.sh` after changing global guidance, agents, or skills
 5. validate the installed setup, not just the repo files
 6. start Codex in a representative workspace
-7. use the starter prompt that matches the task
+7. start with `$godmode-workflow` and add only the extra skills the task really needs
 8. make the smallest safe change
 9. run the relevant validations only
 10. commit on `main` when you really want to keep the change
 11. push `main` when explicitly approved
 
+## Definition of Done
+
+A GodMode run is done only when all of these are true:
+
+- `validator` gate is green
+- `tester` gate is green
+- `CHANGELOG.md` under `[Unreleased]` reflects the current unreleased branch state
+- when department mode is active, the write-scope matrix has no single-writer conflict for the touched paths
+
 ## Good first skills in this repo
 
 - `godmode-workflow`
+- `godmode-departments`
+- `godmode-debug`
+- `godmode-review`
+- `greenfield-bootstrap`
 - `apple-platforms`
 - `web-platforms`
 - `flutter-dart`
 - `release-manager`
 
+## Local install testing note
+
+When you test the global install while working inside this installer repo,
+Codex can legitimately see both:
+
+- the repo-local canonical skills under `.agents/skills/`
+- the globally installed copies under `~/.agents/skills/`
+
+That overlap is expected in this repo because it is both the source of truth
+and the installer source. The real bug is stale `*.backup-*` artifacts inside
+`~/.agents/skills/` or `~/.codex/agents/`, because those can surface as extra
+duplicate entries. The installer now archives those backups under
+`~/.codex/backups/` so the live discovery roots stay clean.
+
 ## Not part of this step
 
 - a dedicated GUI for the agent system
 - a fully automated runtime outside Codex
-- CI/CD or release automation
+- deployment automation or release automation beyond the repo validation CI
 
 Those can come later once the global install flow is stable.

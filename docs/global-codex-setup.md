@@ -25,6 +25,8 @@ Priority rules that matter:
 
 - the closest `AGENTS.md` to the current working directory wins
 - `.codex/config.toml` is loaded only for trusted projects
+- if a repo has no root `AGENTS.md`, Codex should still inspect repo-root `README.md`, `CONTRIBUTING.md`, PR templates, and release or governance docs before editing contracts or release artifacts
+- if the workspace starts empty, create repo-local governance before parallel implementation begins
 
 ## Fast start on this Mac
 
@@ -49,6 +51,11 @@ That script does five things:
 - installs the GodMode skills to `~/.agents/skills/`
 - ensures `~/.codex/playwright-output/isolated` exists
 - adds the current repo path as a trusted project
+
+It also archives prior install snapshots under `~/.codex/backups/` instead of
+leaving `*.backup-*` files or directories inside the active agent and skill
+discovery roots. That matters because in-place backups can surface as duplicate
+skills or agents in Codex.
 
 It also replaces the `__CODEX_HOME__` placeholder inside the config template so the Playwright output path stays portable.
 
@@ -80,6 +87,7 @@ Example:
 
 ## Execution flow
 - For non-trivial tasks: Research -> Plan -> Build -> Validate -> Release Summary.
+- Start with a governance preflight and identify the repo's release and documentation rules before editing versioned artifacts.
 - Before editing, report repo root, current branch, touched files, and expected impact.
 
 ## Safety gates
@@ -130,6 +138,10 @@ codex --profile review
 
 These profiles are intentionally thin. The workflow itself comes from the globally installed `AGENTS.md`, custom agents, and skills.
 
+For greenfield work, the installed skills also include
+`greenfield-bootstrap` so a new repo can establish local rules before the
+rest of the workflow fans out.
+
 ## Installed runtime layout
 
 After running the installer, the user-level runtime looks like this:
@@ -147,15 +159,34 @@ After running the installer, the user-level runtime looks like this:
     tester.toml
     scribe.toml
     github_manager.toml
+    runtime_platform.toml
+    workflow_design.toml
+    workspace_governance.toml
+    quality_operations.toml
+    docs_dx.toml
+    ci_security_guardian.toml
 
 ~/.agents/
   skills/
     godmode-workflow/
+    godmode-departments/
+    godmode-debug/
+    godmode-review/
+    greenfield-bootstrap/
     apple-platforms/
     web-platforms/
     flutter-dart/
     release-manager/
 ```
+
+The first eight agents remain the role-centric baseline. The department-oriented agents are optional additions for larger multi-domain runs and do not mean every task should fan out by default.
+
+The matching skill split is:
+
+- `godmode-workflow` as the primary entry skill for most runs
+- `godmode-departments` as the explicit opt-in layer for department-mode routing
+- `godmode-debug` as the focused companion for reproduce -> isolate -> fix work
+- `godmode-review` as the focused companion for findings-first assessment work
 
 That is the important UX boundary: users do not need this repository open in every new Codex session after installation.
 
@@ -180,6 +211,8 @@ Why the split matters:
 - `.codex/agents/*.toml` defines role-specific custom agents
 - `.agents/skills/` stores reusable procedures
 - workspace-local copies remain optional overrides when a project needs them
+- repos with custom versioning or documentation law should strongly prefer a root `AGENTS.md` so those rules are not left implicit in deeper docs only
+- new repos should establish that root `AGENTS.md` early, before multi-agent delivery work starts
 
 ## Why not a giant start prompt
 
@@ -196,11 +229,31 @@ The durable pattern is:
 
 This repository keeps prompts short on purpose because the real behavior belongs in those layers.
 
+The current best-practice entry pattern is:
+
+- invoke `$godmode-workflow`
+- describe the real task in plain language
+- add context, constraints, and a done condition
+- add companion skills only when they materially change the workflow
+
 ## Smoke-test the install
 
-After applying the installer, start Codex in any workspace and use one of the README prompts.
+After applying the installer, start Codex in any workspace and use a minimal skill-first prompt such as:
 
-The prompt should explicitly invoke `$godmode-workflow` and should not refer to this repository as a required runtime dependency.
+```text
+$godmode-workflow
+
+Goal: <goal>
+Context:
+- <files, errors, constraints>
+Done when:
+- <finish condition>
+```
+
+Add companion skills such as `$godmode-departments`, `$godmode-debug`,
+`$godmode-review`, `$greenfield-bootstrap`, or stack-specific skills only
+when the task actually needs them. The prompt should not refer to this
+repository as a required runtime dependency.
 
 ## Notes about Local vs Worktree
 
@@ -220,7 +273,9 @@ I have not seen a documented global setting that forces every new session to use
 - OpenAI Codex docs: [Config basics](https://developers.openai.com/codex/config-basic)
 - OpenAI Codex docs: [Custom instructions with AGENTS.md](https://developers.openai.com/codex/guides/agents-md)
 - OpenAI Codex docs: [Customization](https://developers.openai.com/codex/concepts/customization)
+- OpenAI Codex docs: [Best practices](https://developers.openai.com/codex/learn/best-practices)
 - OpenAI Codex docs: [Agent Skills](https://developers.openai.com/codex/skills)
+- OpenAI Cookbook: [Codex Prompting Guide](https://developers.openai.com/cookbook/examples/gpt-5/codex_prompting_guide)
 - OpenAI Codex docs: [Configuration reference](https://developers.openai.com/codex/config-reference)
 - OpenAI Codex docs: [Sample configuration](https://developers.openai.com/codex/config-sample)
 - OpenAI Codex docs: [Worktrees](https://developers.openai.com/codex/app/worktrees)
