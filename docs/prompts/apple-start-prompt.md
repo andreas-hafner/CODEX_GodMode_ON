@@ -11,6 +11,9 @@ $godmode-workflow
 $apple-platforms
 
 Goal: <goal>
+Context: <app, target, scheme, platform, or user flow>
+Constraints: <non-goals, deployment target, compatibility requirements>
+Done when: <xcodebuild command or manual verification signal>
 
 Context:
 - <target app, scheme, directory, platform scope, or validation command>

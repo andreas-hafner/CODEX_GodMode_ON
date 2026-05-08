@@ -2,15 +2,20 @@
 
 This roadmap is not a list of “nice someday ideas.” It is the delivery path for the Codex GodMode port.
 
-Current status as of 2026-04-17:
+Current release: `1.0.0`.
 
-- Phases 0-3 are complete in the repo baseline.
-- Phase 4 is in progress through the current improvement sprint.
-- Phase 5 remains next.
+## Release status
 
-## Phase 0: Blueprint baseline
+| Phase | Status in 1.0.0 |
+| --- | --- |
+| Phase 0: Blueprint | complete |
+| Phase 1: Repository scaffolding | complete |
+| Phase 2: Orchestrator contract | complete as documented workflow guidance |
+| Phase 3: Guardrails and helper tools | partially complete through install and environment checks |
+| Phase 4: Reference implementation | complete as an installable Codex runtime package |
+| Phase 5: Validation and community hardening | ongoing |
 
-Status: done
+## Phase 0: Blueprint
 
 Goal:
 
@@ -26,7 +31,7 @@ Deliverables:
 
 Done when:
 
-- a new reader understands the purpose, target shape, and next implementation step without extra context
+- a new reader understands the purpose, target shape, and implementation status without extra context
 
 ## Phase 1: Optional department scaffolding
 
@@ -38,10 +43,10 @@ Goal:
 
 Expected contents:
 
-- department-routing documentation
-- intake, handoff, and write-scope templates
-- state templates for resumable orchestration
-- clear guidance that the smallest viable team should be the default
+- packaged agent definitions under `templates/global-codex/agents/`
+- packaged skill definitions under `templates/global-codex/skills/`
+- state and report directories
+- documented `[agents]` configuration examples
 
 Done when:
 
@@ -64,11 +69,7 @@ Expected contents:
 
 Done when:
 
-- the docs clearly answer:
-  - what exists today
-  - what the target model is
-  - when to stay lean
-  - when to fan out
+- every step between intake and completion is documented as a deterministic Codex workflow
 
 ## Phase 3: Department-aware runtime additions
 
@@ -115,7 +116,7 @@ Expected contents:
 
 Done when:
 
-- critical rules are not only described but can also be checked technically
+- critical install and readiness rules are not only described but can also be checked locally
 
 ## Phase 5: Pilot runs and hardening
 
@@ -127,11 +128,37 @@ Goal:
 
 Expected contents:
 
-- demo runs across lean, guided, and department modes
+- core custom agents and optional department agents
+- core workflow skills, companion lane skills, and stack skills
+- example flows for feature work, debugging, and API changes
+
+Done when:
+
+- a new user can reproduce the workflow locally
+
+## Phase 5: Validation and community hardening
+
+Goal:
+
+- test the reference against real use cases and sharpen the weak points
+
+Expected contents:
+
+- demo runs
 - discussion-driven feedback
 - refinement of unclear boundaries and gates
 - versioning of the blueprint and later of the runtime
 
 Done when:
 
-- the system is stable enough for repeated use, understandable to contributors outside the core team, and does not require maximum fan-out to be effective
+- the system is stable enough for repeated use and understandable to contributors outside the core team
+
+## After 1.0.0
+
+Likely next hardening areas:
+
+- example reports and state files that demonstrate clean handoffs
+- optional schema checks for `reports/` and `state/`
+- eval-style examples for skill trigger accuracy and workflow routing
+- broader documentation examples from real web, Apple, Flutter, review, and debug runs
+- CI checks for shell scripts, markdown links, and packaged agent or skill metadata

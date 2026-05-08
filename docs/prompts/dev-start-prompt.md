@@ -10,6 +10,9 @@ These prompts assume the global install has already been applied.
 $godmode-workflow
 
 Goal: <goal>
+Context: <repo, package, branch, or relevant background>
+Constraints: <non-goals, files to avoid, compatibility requirements>
+Done when: <commands, expected behavior, or release output>
 
 Context:
 - <relevant files, errors, constraints, or architecture notes>
@@ -27,9 +30,8 @@ Done when:
 
 ## Optional extras
 
-- add `$godmode-departments` for multi-domain work that needs explicit routing and write-scope control
-- add `$godmode-debug` when the task is mainly bug-fixing or failure isolation
-- add `$godmode-review` when the task is mainly findings-first analysis
-- add `$greenfield-bootstrap` if the workspace is empty or still lacks repo-local governance
-- add `$web-platforms`, `$apple-platforms`, or `$flutter-dart` only when stack-specific guidance should shape the run immediately
-- include a validation command, explicit non-goals, or release-policy references only when they materially change the task
+- target files or directories
+- required validation command such as `pnpm test`, `xcodebuild test`, or `flutter test`
+- explicit non-goals to keep scope tight
+- prepend `$web-platforms`, `$apple-platforms`, or `$flutter-dart` if stack-specific guidance should trigger immediately
+- local rules or release law that should govern the task

@@ -1,7 +1,7 @@
 # GodMode Improvement Sprint — Codex Prompt
 
-**Branch:** `codex/plane-fachagentenorganisation`  
-**Datum:** 2026-04-16  
+**Branch:** `codex/plane-fachagentenorganisation`
+**Datum:** 2026-04-16
 **Zweck:** Geführter Verbesserungs-Sprint über vier klar begrenzte Baustellen.
 
 ---
@@ -14,8 +14,8 @@ Du arbeitest im Repo `CODEX_GodMode_ON-Lokal`. Das ist das Referenz- und Install
 - `docs/department-orchestration.md` (aktueller vs. Zielzustand)
 - `docs/blueprint.md` (Architekturziel)
 - `reports/generated/department-agent-orchestration-plan-2026-04-12.md` (letzter Orchestrierungsplan)
-- `.codex/agents/*.toml` (alle aktuellen Agenten)
-- `.agents/skills/godmode-workflow/SKILL.md` und `godmode-departments/SKILL.md`
+- `templates/global-codex/agents/*.toml` (alle paketierten Agenten)
+- `templates/global-codex/skills/godmode-workflow/SKILL.md` und `godmode-departments/SKILL.md`
 - `CHANGELOG.md` und `VERSION`
 
 Nutze `$godmode-departments` zusammen mit `$godmode-workflow`. Der aktuelle Stand auf dem Branch hat bereits unstaged Changes und neue ungetrackte Dateien — behandle diese als Eingabe, nicht als fertig committet.
@@ -37,14 +37,14 @@ Vier Baustellen schließen, die das System jetzt bremsen. Jede Baustelle hat ein
 **Aufgaben:**
 
 1. Lies alle unstaged/untracked Änderungen auf dem Branch:
-   - `.agents/skills/release-manager/SKILL.md` (modified)
+   - `templates/global-codex/skills/release-manager/SKILL.md` (modified)
    - `docs/prompts/apple-start-prompt.md` (modified)
    - `docs/prompts/debug-start-prompt.md` (modified)
    - `docs/prompts/dev-start-prompt.md` (modified)
    - `docs/prompts/flutter-start-prompt.md` (modified)
    - `docs/prompts/review-start-prompt.md` (modified)
    - `docs/prompts/web-start-prompt.md` (modified)
-   - `.agents/skills/greenfield-bootstrap/SKILL.md` (neu)
+   - `templates/global-codex/skills/greenfield-bootstrap/SKILL.md` (neu)
    - `docs/prompts/greenfield-start-prompt.md` (neu)
    - `templates/project-bootstrap/` (neu)
 
@@ -70,13 +70,13 @@ Vier Baustellen schließen, die das System jetzt bremsen. Jede Baustelle hat ein
 
 **Aufgaben:**
 
-1. Erstelle `.codex/agents/ci_security_guardian.toml` mit folgender Spezifikation:
+1. Erstelle `templates/global-codex/agents/ci_security_guardian.toml` mit folgender Spezifikation:
    - `name = "ci_security_guardian"`
    - `sandbox_mode = "workspace-write"` (muss Workflow-YAML schreiben können)
    - Zuständigkeit: `.github/workflows/**`, `.github/CODEOWNERS`, `.github/dependabot.yml`, alle GitHub-Sicherheitskonfigurationen
    - Explizites `developer_instructions`-Feld mit folgenden Regeln:
      - Erstelle oder reviewe GitHub Actions Workflows nach aktuellem Security-Best-Practice (Pin actions auf SHA, kein `pull_request_target` ohne Reviewpflicht, least-privilege `permissions`)
-     - Verwalte `CODEOWNERS` für kritische Pfade: `.codex/agents/`, `.agents/skills/`, `AGENTS.md`, `.github/workflows/`
+     - Verwalte `CODEOWNERS` für kritische Pfade: `templates/global-codex/agents/`, `templates/global-codex/skills/`, `AGENTS.md`, `.github/workflows/`
      - Konfiguriere Dependabot für Actions und direkte Abhängigkeiten
      - Aktiviere Secret Scanning und Push Protection wenn möglich
      - Empfehle CodeQL für dieses Repo (Shell-Skripte, Markdown-Linting)
@@ -107,16 +107,16 @@ Vier Baustellen schließen, die das System jetzt bremsen. Jede Baustelle hat ein
 **Aufgaben:**
 
 1. Definiere in `AGENTS.md` (neuer Abschnitt "Validation law") was die Gates konkret prüfen:
-   - **Validator-Gate:** Strukturprüfung (TOML-Syntax aller Agenten, Markdown-Konsistenz, interne Linkintegrität, Rollenname-Konsistenz zwischen `AGENTS.md`, `.codex/agents/*.toml`, `.agents/skills/`), keine Quelldateiänderungen
+   - **Validator-Gate:** Strukturprüfung (TOML-Syntax aller Agenten, Markdown-Konsistenz, interne Linkintegrität, Rollenname-Konsistenz zwischen `AGENTS.md`, `templates/global-codex/agents/*.toml`, `templates/global-codex/skills/`), keine Quelldateiänderungen
    - **Tester-Gate:** Führe `./scripts/check-local-env.sh` aus, prüfe alle Shell-Skripte auf Syntax-Fehler (`bash -n`), bestätige dass neue Skills ein `name`- und `description`-Frontmatter haben
    - Beide Gates müssen explizit als bestanden/fehlgeschlagen protokolliert werden, bevor `scribe` schreibt
 
 2. Erweitere `./scripts/check-local-env.sh` um folgende Checks (oder erstelle ein separates `./scripts/validate-repo.sh`):
-   - Alle `.codex/agents/*.toml` haben `name`, `description`, `sandbox_mode`, `developer_instructions`
-   - Alle `.agents/skills/*/SKILL.md` haben `name`- und `description`-Frontmatter
+   - Alle `templates/global-codex/agents/*.toml` haben `name`, `description`, `sandbox_mode`, `developer_instructions`
+   - Alle `templates/global-codex/skills/*/SKILL.md` haben `name`- und `description`-Frontmatter
    - `CHANGELOG.md [Unreleased]` ist nicht leer wenn ungetrackte oder unstaged Änderungen existieren
    - `VERSION`-Datei stimmt mit letztem Versionstag in `CHANGELOG.md` überein
-   - Rollenname in `.codex/agents/*.toml` stimmt mit `name`-Feld überein
+   - Rollenname in `templates/global-codex/agents/*.toml` stimmt mit `name`-Feld überein
 
 3. Dokumentiere in `docs/local-development.md` den vollständigen "Definition of Done" für einen GodMode-Lauf:
    - Validator-Gate grün
@@ -149,7 +149,7 @@ Vier Baustellen schließen, die das System jetzt bremsen. Jede Baustelle hat ein
    - Einer Zeile pro Agent (inkl. neuer `ci_security_guardian`)
    - Dieser Register wird von `Contract Office` bei jedem Lauf als Referenz genutzt
 
-**Gate:** `validator` prüft alle internen Links in den geänderten Docs, prüft Rollenname-Konsistenz zwischen `agent-registry.md` und `.codex/agents/*.toml`.
+**Gate:** `validator` prüft alle internen Links in den geänderten Docs, prüft Rollenname-Konsistenz zwischen `agent-registry.md` und `templates/global-codex/agents/*.toml`.
 
 ---
 
@@ -165,7 +165,7 @@ Phase 1 (sequentiell):
     Reason: Changelog-Gesetz regelt, was alle anderen Baustellen dokumentieren dürfen
 
 Phase 2 (parallelisierbar, disjunkte Write-Scopes):
-  → Baustelle 2 (.github/**, .codex/agents/, docs/department-orchestration.md)
+  → Baustelle 2 (.github/**, templates/global-codex/agents/, docs/department-orchestration.md)
   → Baustelle 3 (scripts/, AGENTS.md Abschnitt Validation, docs/local-development.md)
   Einzel-Writer-Regel: ein Schreiber pro Pfad
 

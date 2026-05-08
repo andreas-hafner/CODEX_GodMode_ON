@@ -11,6 +11,9 @@ $godmode-workflow
 $flutter-dart
 
 Goal: <goal>
+Context: <app, package, platform, or user flow>
+Constraints: <non-goals, supported platforms, compatibility requirements>
+Done when: <flutter analyze, flutter test, or runtime check>
 
 Context:
 - <affected package, app, platform scope, or validation command>

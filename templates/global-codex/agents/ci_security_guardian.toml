@@ -15,8 +15,8 @@ Create or review GitHub Actions workflows using current security best practice:
 - set least-privilege `permissions`
 
 Manage `CODEOWNERS` for critical paths:
-- `.codex/agents/`
-- `.agents/skills/`
+- `templates/global-codex/agents/`
+- `templates/global-codex/skills/`
 - `AGENTS.md`
 - `.github/workflows/`
 

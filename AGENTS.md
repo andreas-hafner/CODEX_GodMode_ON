@@ -6,10 +6,11 @@
 - This repository is `main`-first. Do not create or switch to feature branches unless the user explicitly asks for one.
 - Prefer current official OpenAI Codex documentation when changing setup guidance or product claims.
 - Keep repo guidance explicit, auditable, and clearly separated from future implementation work.
-- Use `AGENTS.md` for durable repo rules, `.codex/config.toml` for repo defaults, `.codex/agents/` for the canonical GodMode custom agents, and `.agents/skills/` for the canonical GodMode reusable procedures.
+- Use `AGENTS.md` for durable repo rules, `.codex/config.toml` for repo defaults, `templates/global-codex/agents/` for packaged GodMode custom agents, and `templates/global-codex/skills/` for packaged GodMode reusable procedures.
+- Do not keep the packaged global GodMode agents or skills in repo-local discovery paths such as `.codex/agents/` or `.agents/skills/`; after global installation that creates duplicate project and personal entries in Codex.
 - Do not add speculative guidance about Codex features without a source or a clear note that it is an inference.
 - If the original Claude repository is referenced, distinguish between extracted facts from the source repo and new Codex design decisions.
-- Keep `.codex/agents/`, `.agents/skills/`, installer behavior, and docs aligned when role names or workflow gates change.
+- Keep `templates/global-codex/agents/`, `templates/global-codex/skills/`, installer behavior, and docs aligned when role names or workflow gates change.
 
 ## Documentation rules
 
@@ -33,7 +34,7 @@
 
 ## Validation law
 
-- `validator` is the structural gate. It checks TOML syntax for `.codex/agents/*.toml`, Markdown consistency, internal links, and role-name consistency across `AGENTS.md`, `.codex/agents/*.toml`, and `.agents/skills/`. It does not edit source files.
+- `validator` is the structural gate. It checks TOML syntax for `templates/global-codex/agents/*.toml`, Markdown consistency, internal links, and role-name consistency across `AGENTS.md`, `templates/global-codex/agents/*.toml`, and `templates/global-codex/skills/`. It does not edit source files.
 - `tester` is the executable gate. It runs `./scripts/check-local-env.sh`, verifies shell-script syntax with `bash -n`, and confirms that new skills carry `name` and `description` frontmatter.
 - Both gates must be explicitly recorded as pass or fail before `scribe` updates changelog text, reports, or final summary artifacts.
 

@@ -2,11 +2,13 @@
 
 This note explains the user-level Codex setup that turns this repository into a one-time installer instead of a per-session dependency.
 
+This page documents the `1.0.0` runtime layout.
+
 The goal is simple:
 
 - install once
 - use the GodMode workflow in any workspace
-- keep a clean split between global runtime and local overrides
+- keep a clean split between global runtime and local project capabilities
 
 ## Recommended layer model
 
@@ -21,12 +23,14 @@ The current Codex documentation supports this structure:
 - project-specific custom agents in `.codex/agents/*.toml`
 - repo-specific reusable procedures in `.agents/skills/`
 
-Priority rules that matter:
+Discovery rules that matter:
 
-- the closest `AGENTS.md` to the current working directory wins
+- Codex reads global guidance from `AGENTS.override.md` when present, otherwise `AGENTS.md`
+- project guidance is layered from the project root down to the current working directory
+- in each project directory, `AGENTS.override.md` takes precedence over `AGENTS.md`
+- files closer to the current working directory win because they appear later in the merged instruction chain
 - `.codex/config.toml` is loaded only for trusted projects
-- if a repo has no root `AGENTS.md`, Codex should still inspect repo-root `README.md`, `CONTRIBUTING.md`, PR templates, and release or governance docs before editing contracts or release artifacts
-- if the workspace starts empty, create repo-local governance before parallel implementation begins
+- same-name skills are not AGENTS-style merged; keep skill names focused and avoid accidental duplicates
 
 ## Fast start by platform
 
@@ -34,8 +38,8 @@ This repository ships a reproducible global setup under:
 
 - `templates/global-codex/AGENTS.md`
 - `templates/global-codex/config.toml`
-- `.codex/agents/`
-- `.agents/skills/`
+- `templates/global-codex/agents/`
+- `templates/global-codex/skills/`
 - `scripts/apply-global-codex-setup.sh`
 - `scripts/apply-global-codex-setup.ps1`
 
@@ -82,6 +86,27 @@ Windows:
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\apply-global-codex-setup.ps1 -Check
 ```
 
+## Upgrade from 0.2.x
+
+The previous public line was `0.2.1`. Version `1.0.0` expands the installed runtime and changes the default model to `gpt-5.5`.
+
+Use this sequence:
+
+```bash
+git pull --ff-only origin main
+./scripts/check-local-env.sh
+./scripts/apply-global-codex-setup.sh
+./scripts/apply-global-codex-setup.sh --check
+```
+
+On Windows, use the PowerShell installer and `-Check` command instead of the shell script.
+
+The installer creates timestamped backups before replacing existing files or directories. After the upgrade, `~/.codex/agents/` should contain 14 agent manifests and `~/.agents/skills/` should contain the nine skills shipped by this repo.
+
+If you maintain hand-edited personal guidance in `~/.codex/AGENTS.md` or `~/.codex/config.toml`, inspect the generated backup files and reapply personal edits intentionally.
+
+This bootstrap repository intentionally does not keep the packaged runtime under repo-local `.codex/agents/` or `.agents/skills/`. Those are official project discovery paths; keeping the global package source there would make Codex show duplicate project and personal skills when this repository is open after installation.
+
 ## Minimal global files
 
 Create the Codex home directory if needed:
@@ -118,7 +143,7 @@ Global technical defaults belong in `~/.codex/config.toml`.
 Example:
 
 ```toml
-model = "gpt-5.4"
+model = "gpt-5.5"
 approval_policy = "on-request"
 sandbox_mode = "workspace-write"
 web_search = "cached"
@@ -130,10 +155,12 @@ network_access = false
 
 Why this is a good baseline:
 
-- `gpt-5.4` is a strong default model choice
+- `gpt-5.5` is the current frontier default for coding and professional work
 - `approval_policy = "on-request"` keeps risky actions interactive
 - `sandbox_mode = "workspace-write"` allows project edits without full machine access
 - `web_search = "cached"` is conservative by default
+
+Changing the model default is a release-impacting behavior change. Keep it documented in `CHANGELOG.md` and verify the installed config after applying the setup script.
 
 ## Global profiles
 
@@ -186,9 +213,9 @@ After running the installer, the user-level runtime looks like this:
 ~/.agents/
   skills/
     godmode-workflow/
-    godmode-departments/
     godmode-debug/
     godmode-review/
+    godmode-departments/
     greenfield-bootstrap/
     apple-platforms/
     web-platforms/
@@ -206,6 +233,48 @@ The matching skill split is:
 - `godmode-review` as the focused companion for findings-first assessment work
 
 That is the important UX boundary: users do not need this repository open in every new Codex session after installation.
+
+## Runtime roles
+
+The 1.0 runtime installs these core agents:
+
+| Agent | Purpose |
+| --- | --- |
+| `researcher` | read-only research, source verification, and repo discovery |
+| `architect` | read-only plan, boundary, and risk design |
+| `api_guardian` | read-only API, schema, CLI, config, and user-visible contract review |
+| `builder` | single normal implementation writer |
+| `validator` | read-heavy consistency, static, and structural validation |
+| `tester` | executable checks and focused runtime verification |
+| `scribe` | docs, changelog, and release-note work after gates pass |
+| `github_manager` | branch, PR, release, and governance framing |
+
+It also installs optional department agents for large cross-domain runs:
+
+| Agent | Purpose |
+| --- | --- |
+| `runtime_platform` | runtime defaults, sandboxing, tools, and environment concerns |
+| `workflow_design` | orchestration procedures, skill boundaries, and handoff artifacts |
+| `workspace_governance` | AGENTS layering, release law, and local project rules |
+| `quality_operations` | validation plans, install checks, smoke paths, and eval-oriented checks |
+| `docs_dx` | public docs, setup guidance, prompts, and developer experience |
+| `ci_security_guardian` | GitHub Actions, CODEOWNERS, pinned actions, and repository security posture |
+
+Department agents are advisory lanes. They do not replace the default `researcher` -> `architect` -> `builder` -> `validator` and `tester` route.
+
+## Runtime skills
+
+| Skill | Purpose |
+| --- | --- |
+| `godmode-workflow` | the normal non-trivial task loop |
+| `godmode-debug` | reproduce -> isolate -> fix -> re-test work |
+| `godmode-review` | findings-first review with no edits unless requested |
+| `godmode-departments` | optional routing for cross-domain work |
+| `greenfield-bootstrap` | create local governance before parallel work in empty or undocumented repos |
+| `apple-platforms` | SwiftUI, macOS, and iOS guidance |
+| `web-platforms` | React, Next.js, and Node.js guidance |
+| `flutter-dart` | Flutter and Dart guidance |
+| `release-manager` | release impact, changelog, and PR framing |
 
 ## Repo layout
 
@@ -227,9 +296,9 @@ Why the split matters:
 - `.codex/config.toml` defines technical defaults
 - `.codex/agents/*.toml` defines role-specific custom agents
 - `.agents/skills/` stores reusable procedures
-- workspace-local copies remain optional overrides when a project needs them
-- repos with custom versioning or documentation law should strongly prefer a root `AGENTS.md` so those rules are not left implicit in deeper docs only
-- new repos should establish that root `AGENTS.md` early, before multi-agent delivery work starts
+- workspace-local files remain project-scoped guidance or capabilities when a project needs them
+
+In this bootstrap repository, packaged global runtime sources live under `templates/global-codex/agents/` and `templates/global-codex/skills/` instead. Downstream projects should still use `.codex/agents/` and `.agents/skills/` when they intentionally need project-local agents or skills.
 
 ## Why not a giant start prompt
 
@@ -243,15 +312,39 @@ The durable pattern is:
 - repo `.codex/config.toml` for technical repo defaults
 - repo `.codex/agents/*.toml` for project roles
 - repo `.agents/skills/` for reusable procedures
+- this repo's `templates/global-codex/agents/` and `templates/global-codex/skills/` for package sources that should not be discovered as project-local duplicates
 
 This repository keeps prompts short on purpose because the real behavior belongs in those layers.
 
-The current best-practice entry pattern is:
+`AGENTS.md` files form a layered instruction chain. Skills are discovered capabilities with progressive disclosure: Codex sees metadata first and reads the full `SKILL.md` only when it selects the skill.
 
-- invoke `$godmode-workflow`
-- describe the real task in plain language
-- add context, constraints, and a done condition
-- add companion skills only when they materially change the workflow
+## Validation and smoke tests
+
+Before publishing a release or telling users to update, run:
+
+```bash
+git diff --check
+./scripts/check-local-env.sh
+./scripts/apply-global-codex-setup.sh --check
+```
+
+For installer changes, verify a clean target:
+
+```bash
+tmp_root="$(mktemp -d)"
+tmp_codex="$tmp_root/.codex"
+tmp_skills="$tmp_root/.agents/skills"
+./scripts/apply-global-codex-setup.sh \
+  --codex-home "$tmp_codex" \
+  --user-skills-home "$tmp_skills" \
+  --no-trust-project
+./scripts/apply-global-codex-setup.sh --check \
+  --codex-home "$tmp_codex" \
+  --user-skills-home "$tmp_skills" \
+  --no-trust-project
+```
+
+That smoke test proves a first-time install can create the full runtime without relying on this machine's existing `~/.codex` or `~/.agents` state.
 
 ## Smoke-test the install
 
@@ -292,9 +385,10 @@ I have not seen a documented global setting that forces every new session to use
 - OpenAI Codex docs: [Customization](https://developers.openai.com/codex/concepts/customization)
 - OpenAI Codex docs: [Best practices](https://developers.openai.com/codex/learn/best-practices)
 - OpenAI Codex docs: [Agent Skills](https://developers.openai.com/codex/skills)
-- OpenAI Cookbook: [Codex Prompting Guide](https://developers.openai.com/cookbook/examples/gpt-5/codex_prompting_guide)
+- OpenAI Codex docs: [Subagents](https://developers.openai.com/codex/subagents)
 - OpenAI Codex docs: [Configuration reference](https://developers.openai.com/codex/config-reference)
 - OpenAI Codex docs: [Sample configuration](https://developers.openai.com/codex/config-sample)
+- OpenAI API docs: [All models](https://developers.openai.com/api/docs/models/all)
 - OpenAI Codex docs: [Worktrees](https://developers.openai.com/codex/app/worktrees)
 - OpenAI Codex docs: [Automations](https://developers.openai.com/codex/app/automations)
 - OpenAI Codex docs: [Codex app settings](https://developers.openai.com/codex/app/settings)

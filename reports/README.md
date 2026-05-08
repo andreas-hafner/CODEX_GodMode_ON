@@ -6,14 +6,32 @@ This directory is for persistent agent handoffs and locally reproducible reports
 
 - versioned example or reference reports may stay in the repository
 - generated runtime reports should go under `reports/generated/`
-- reusable planning and handoff templates should go under `reports/templates/`
+- reports should summarize decisions, evidence, and next routing steps
+- do not store secrets, full chat transcripts, or unrelated logs
 
 ## Convention
 
 - `reports/generated/NN-role-report.md`
 - short, concrete summaries instead of full chat transcripts
-- use templates for:
-  - intake briefs
-  - department routing maps
-  - write-scope matrices
-  - department handoffs
+
+## Suggested report shape
+
+```md
+# <date> <role> Report
+
+## Scope
+
+What was reviewed or changed.
+
+## Findings
+
+Facts, risks, or decisions that matter for the parent workflow.
+
+## Validation
+
+Commands run, results, and gaps.
+
+## Handoff
+
+Recommended next role or action.
+```

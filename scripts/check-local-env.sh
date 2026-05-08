@@ -68,6 +68,16 @@ check_path() {
   fi
 }
 
+check_absent() {
+  local path="$1"
+  if [[ -e "$repo_root/$path" ]]; then
+    printf '[unexpected] %s\n' "$path"
+    status=1
+  else
+    printf '[ok] absent %s\n' "$path"
+  fi
+}
+
 check_agent_contracts() {
   if ! command -v python3 >/dev/null 2>&1; then
     printf '[missing] python3 (required for TOML validation)\n'
@@ -75,7 +85,7 @@ check_agent_contracts() {
     return
   fi
 
-  for file in "$repo_root"/.codex/agents/*.toml; do
+  for file in "$repo_root"/templates/global-codex/agents/*.toml; do
     local output=""
     if output="$(python3 - "$file" 2>&1 <<'PY'
 import os
@@ -115,7 +125,7 @@ PY
 }
 
 check_skill_frontmatter() {
-  for file in "$repo_root"/.agents/skills/*/SKILL.md; do
+  for file in "$repo_root"/templates/global-codex/skills/*/SKILL.md; do
     if awk '
       BEGIN { in_frontmatter = 0; end_frontmatter = 0; has_name = 0; has_description = 0 }
       NR == 1 {
@@ -300,27 +310,40 @@ printf '\nRepo structure:\n'
 check_path "AGENTS.md"
 check_path "README.md"
 check_path ".codex/config.toml"
-check_path ".codex/agents"
-check_path ".codex/agents/builder.toml"
-check_path ".codex/agents/ci_security_guardian.toml"
-check_path ".codex/agents/researcher.toml"
-check_path ".codex/agents/runtime_platform.toml"
-check_path ".codex/agents/workflow_design.toml"
-check_path ".codex/agents/workspace_governance.toml"
-check_path ".codex/agents/quality_operations.toml"
-check_path ".codex/agents/docs_dx.toml"
-check_path ".agents/skills"
-check_path ".agents/skills/godmode-workflow/SKILL.md"
-check_path ".agents/skills/godmode-departments/SKILL.md"
-check_path ".agents/skills/godmode-debug/SKILL.md"
-check_path ".agents/skills/godmode-review/SKILL.md"
-check_path ".agents/skills/greenfield-bootstrap/SKILL.md"
-check_path ".agents/skills/web-platforms/SKILL.md"
+check_path "templates/global-codex/agents"
+check_path "templates/global-codex/agents/api_guardian.toml"
+check_path "templates/global-codex/agents/architect.toml"
+check_path "templates/global-codex/agents/builder.toml"
+check_path "templates/global-codex/agents/ci_security_guardian.toml"
+check_path "templates/global-codex/agents/github_manager.toml"
+check_path "templates/global-codex/agents/researcher.toml"
+check_path "templates/global-codex/agents/scribe.toml"
+check_path "templates/global-codex/agents/tester.toml"
+check_path "templates/global-codex/agents/validator.toml"
+check_path "templates/global-codex/agents/runtime_platform.toml"
+check_path "templates/global-codex/agents/workflow_design.toml"
+check_path "templates/global-codex/agents/workspace_governance.toml"
+check_path "templates/global-codex/agents/quality_operations.toml"
+check_path "templates/global-codex/agents/docs_dx.toml"
+check_path "templates/global-codex/skills"
+check_path "templates/global-codex/skills/godmode-workflow/SKILL.md"
+check_path "templates/global-codex/skills/godmode-departments/SKILL.md"
+check_path "templates/global-codex/skills/godmode-debug/SKILL.md"
+check_path "templates/global-codex/skills/godmode-review/SKILL.md"
+check_path "templates/global-codex/skills/greenfield-bootstrap/SKILL.md"
+check_path "templates/global-codex/skills/apple-platforms/SKILL.md"
+check_path "templates/global-codex/skills/flutter-dart/SKILL.md"
+check_path "templates/global-codex/skills/release-manager/SKILL.md"
+check_path "templates/global-codex/skills/web-platforms/SKILL.md"
+check_absent ".codex/agents"
+check_absent ".agents/skills"
 check_path ".github/CODEOWNERS"
 check_path ".github/dependabot.yml"
 check_path ".github/workflows/ci.yml"
 check_path ".github/workflows/codeql.yml"
 check_path "docs/blueprint.md"
+check_path "docs/agent-registry.md"
+check_path "docs/department-orchestration.md"
 check_path "docs/global-codex-setup.md"
 check_path "docs/local-development.md"
 check_path "docs/prompts/dev-start-prompt.md"
@@ -337,7 +360,11 @@ check_path "templates/project-bootstrap/AGENTS.md"
 check_path "scripts/apply-global-codex-setup.sh"
 check_path "scripts/check-local-env.sh"
 check_path "reports"
+check_path "reports/README.md"
+check_path "reports/templates/role-report.md"
 check_path "state"
+check_path "state/README.md"
+check_path "state/templates/workflow-state.local.json"
 
 printf '\nRepo validation:\n'
 check_agent_contracts

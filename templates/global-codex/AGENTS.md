@@ -17,15 +17,15 @@
 - Before editing, report workspace root, current branch if present, touched files, and expected impact when that is not already obvious.
 - Run only the checks that match the changed scope.
 - Use the installed global workflow, custom agents, and skills by default.
-- If the current workspace provides its own `AGENTS.md`, `.codex/agents/`, or `.agents/skills/`, treat them as local overrides and adapt to them instead of ignoring them.
+- If the current workspace provides its own `AGENTS.md`, `.codex/agents/`, or `.agents/skills/`, treat them as local project guidance or capabilities and adapt to them instead of ignoring them.
 - If repo rules are split across docs instead of a root `AGENTS.md`, treat those docs as binding once discovered.
 
 ## Global workflow
 
 - Prefer the GodMode loop for non-trivial work.
 - Available global agents: `researcher`, `architect`, `api_guardian`, `builder`, `validator`, `tester`, `scribe`, `github_manager`.
-- Optional department agents: `runtime_platform`, `workflow_design`, `workspace_governance`, `quality_operations`, `docs_dx`.
-- Available global skills: `godmode-workflow`, `godmode-departments`, `greenfield-bootstrap`, `apple-platforms`, `web-platforms`, `flutter-dart`, `release-manager`.
+- Optional department agents: `runtime_platform`, `workflow_design`, `workspace_governance`, `quality_operations`, `docs_dx`, `ci_security_guardian`.
+- Available global skills: `godmode-workflow`, `godmode-departments`, `godmode-debug`, `godmode-review`, `greenfield-bootstrap`, `apple-platforms`, `web-platforms`, `flutter-dart`, `release-manager`.
 
 ## Profile intents
 

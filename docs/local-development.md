@@ -81,14 +81,48 @@ To verify the global setup:
 ./scripts/apply-global-codex-setup.sh --check
 ```
 
+## Release prep
+
+Current release target: `1.0.0`.
+
+Before publishing a release:
+
+1. confirm `VERSION` matches the intended release
+2. move relevant `CHANGELOG.md` entries from `[Unreleased]` into the dated release section
+3. run `git diff --check`
+4. run `./scripts/check-local-env.sh`
+5. run `./scripts/apply-global-codex-setup.sh --check`
+6. run a clean-target installer smoke test when installer behavior changed
+7. inspect `git diff --stat` and confirm no unrelated files changed
+8. prepare a clear release summary and upgrade notes
+
+Clean-target installer smoke test:
+
+```bash
+tmp_root="$(mktemp -d)"
+tmp_codex="$tmp_root/.codex"
+tmp_skills="$tmp_root/.agents/skills"
+./scripts/apply-global-codex-setup.sh \
+  --codex-home "$tmp_codex" \
+  --user-skills-home "$tmp_skills" \
+  --no-trust-project
+./scripts/apply-global-codex-setup.sh --check \
+  --codex-home "$tmp_codex" \
+  --user-skills-home "$tmp_skills" \
+  --no-trust-project
+```
+
+Do not commit, tag, push, or publish a GitHub release until that action is explicitly approved.
+
 ## Repo structure
 
-- `.codex/agents/` contains the canonical GodMode agent-role definitions
-- `.codex/agents/` now also contains the first optional department-oriented agent definitions
-- `.agents/skills/` contains the canonical reusable workflow and stack skills
-- `templates/global-codex/` contains the global `AGENTS.md` and `config.toml` templates
+- `templates/global-codex/agents/` contains the packaged GodMode agent-role definitions
+- `templates/global-codex/skills/` contains the packaged reusable workflow and stack skills
+- `templates/global-codex/` contains the global `AGENTS.md`, `config.toml`, agent, and skill templates
 - `reports/generated/` is for local generated reports
 - `state/` is for local workflow state
+
+Do not place the packaged global GodMode runtime under this repo's `.codex/agents/` or `.agents/skills/` paths. Codex discovers those as project-local capabilities, which duplicates the same entries from the personal global install while maintaining this bootstrap repo.
 
 ## Recommended loop
 
@@ -104,21 +138,23 @@ To verify the global setup:
 10. commit on `main` when you really want to keep the change
 11. push `main` when explicitly approved
 
-## Definition of Done
+## Validation matrix
 
-A GodMode run is done only when all of these are true:
-
-- `validator` gate is green
-- `tester` gate is green
-- `CHANGELOG.md` under `[Unreleased]` reflects the current unreleased branch state
-- when department mode is active, the write-scope matrix has no single-writer conflict for the touched paths
+| Change type | Minimum validation |
+| --- | --- |
+| docs-only copy changes | `git diff --check` plus link/path consistency review |
+| skills or agent metadata | `./scripts/check-local-env.sh` |
+| installer or global template changes | `./scripts/apply-global-codex-setup.sh --check` and clean-target smoke test |
+| packaged runtime location changes | verify `.codex/agents` and `.agents/skills` are absent in this repo |
+| model or config defaults | docs review, changelog entry, installer check |
+| release prep | all checks above plus `VERSION` and `CHANGELOG.md` review |
 
 ## Good first skills in this repo
 
 - `godmode-workflow`
-- `godmode-departments`
 - `godmode-debug`
 - `godmode-review`
+- `godmode-departments`
 - `greenfield-bootstrap`
 - `apple-platforms`
 - `web-platforms`
@@ -127,17 +163,15 @@ A GodMode run is done only when all of these are true:
 
 ## Local install testing note
 
-When you test the global install while working inside this installer repo,
-Codex can legitimately see both:
+When you test the global install while working inside this installer repo, Codex
+must not see repo-local copies of the packaged GodMode skills or agents. Keep
+the package sources under `templates/global-codex/agents/` and
+`templates/global-codex/skills/`, not under `.codex/agents/` or
+`.agents/skills/`.
 
-- the repo-local canonical skills under `.agents/skills/`
-- the globally installed copies under `~/.agents/skills/`
-
-That overlap is expected in this repo because it is both the source of truth
-and the installer source. The real bug is stale `*.backup-*` artifacts inside
-`~/.agents/skills/` or `~/.codex/agents/`, because those can surface as extra
-duplicate entries. The installer now archives those backups under
-`~/.codex/backups/` so the live discovery roots stay clean.
+Stale `*.backup-*` artifacts inside `~/.agents/skills/` or `~/.codex/agents/`
+can also surface as extra duplicate entries. The installer archives those
+backups under `~/.codex/backups/` so the live discovery roots stay clean.
 
 ## Not part of this step
 

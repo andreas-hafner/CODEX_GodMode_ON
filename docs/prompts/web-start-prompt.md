@@ -11,6 +11,9 @@ $godmode-workflow
 $web-platforms
 
 Goal: <goal>
+Context: <app, package, route, API surface, or framework version>
+Constraints: <non-goals, browser targets, compatibility requirements>
+Done when: <lint, test, build, or runtime check>
 
 Context:
 - <affected app, package, validation command, or contract surface>
